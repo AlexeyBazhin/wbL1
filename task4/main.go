@@ -19,13 +19,10 @@ var (
 
 func startWorker(workerNum int, workerChan chan int) {
 	fmt.Printf("Воркер под номером %v начал работу\n", workerNum)
-	for data := range workerChan { //каждый воркер слушает общий канал с данными
-		// writer.WriteString(strings.Join(
-		// 	[]string{"Воркер", strconv.Itoa(workerNum), "обработал операцию", strconv.Itoa(data), "\n"},
-		// 	" "))
+	for data := range workerChan { //каждый воркер слушает общий канал с данными		
 
 		fmt.Printf("Воркер %v обработал операцию: %v\n", workerNum, data)
-		dataWg.Done()
+		//dataWg.Done()
 		runtime.Gosched() //оповещаем планировщик задач о том, что нужно переключить контекст выполнения
 		//если закомментировать эту строчку, то будет видно, что переключение между горутинами происходит редко
 		//одна из них не будет освобождать ресурсы и давать другим горутинам поработать
@@ -76,13 +73,13 @@ func main() {
 	for {
 		select {
 		case <-quit: //в данном случае понимаем, что пришел сигнал на выход из программы
-			dataWg.Wait()
+			//dataWg.Wait()
 			close(workerChan) //закрываем канал с данными, чтобы воркеры завершили свою работу
 			workerWg.Wait()
 			writer.Flush()
 			return
 		default:
-			dataWg.Add(1)
+			//dataWg.Add(1)
 			workerChan <- data //записываем данные в канал
 			data++
 		}
